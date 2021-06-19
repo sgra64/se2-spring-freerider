@@ -16,6 +16,7 @@ import de.freerider.datamodel.Customer;
  * CrudRepository<Customer, String> interface.
  * 
  */
+
 @Component
 class CustomerRepository implements CrudRepository<Customer, String> {
 	//

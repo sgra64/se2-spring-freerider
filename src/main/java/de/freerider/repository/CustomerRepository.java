@@ -1,5 +1,6 @@
 package de.freerider.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -24,19 +25,20 @@ class CustomerRepository implements CrudRepository<Customer, String> {
 	@Override
 	public <S extends Customer> S save( S entity ) {
 		// TODO Auto-generated method stub
-		return null;
+		return entity;
 	}
 
 	@Override
 	public <S extends Customer> Iterable<S> saveAll( Iterable<S> entities ) {
 		// TODO Auto-generated method stub
-		return null;
+		Iterable<S> result = List.of();		// return empty, immutable list
+		return result;
 	}
 
 	@Override
 	public Optional<Customer> findById( String id ) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
@@ -54,7 +56,8 @@ class CustomerRepository implements CrudRepository<Customer, String> {
 	@Override
 	public Iterable<Customer> findAllById( Iterable<String> ids ) {
 		// TODO Auto-generated method stub
-		return null;
+		Iterable<Customer> result = List.of();		// return empty, immutable list
+		return result;
 	}
 
 	@Override

@@ -16,7 +16,7 @@ import de.freerider.repository.CrudRepository;
 public class Application {
 
 	@Autowired
-	CrudRepository<Customer,String> customerRepository;
+	private CrudRepository<Customer,String> customerRepository;
 
 
 	Application() {
@@ -31,10 +31,10 @@ public class Application {
 			long count = customerRepository.count();	// triggers loading data
 			System.out.println( "CustomerRepository.count() -> " + count );
 			//
-//			String id = "C020301";
-//			customerRepository.findById( id ).ifPresentOrElse( c -> { log( "Customer found", c ); }, () -> {
-//				log( "No Customer found for id: " + id, (Customer)null );
-//			});
+			String id = "C020301";
+			customerRepository.findById( id ).ifPresentOrElse( c -> { log( "Customer found", c ); }, () -> {
+				log( "No Customer found for id: " + id, (Customer)null );
+			});
 		};
 	}
 

@@ -7,26 +7,10 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Application",
+            "name": "FreeriderApplication",
             "request": "launch",
-            "mainClass": "Ordering_System/application.Application",
-            "projectName": "$name"
-        },
-        {
-            "type": "java",
-            "name": "Launch_1",
-            "request": "launch",
-            "mainClass": "application.Application",
+            "mainClass": "de.bht_berlin.freerider.FreeriderApplication",
             "args": "",
-            "console": "integratedTerminal",
-            "vmArgs": ""
-        },
-        {
-            "type": "java",
-            "name": "Launch_2",
-            "request": "launch",
-            "mainClass": "se1.play/application.Application",
-            "args": "A, BB, CCC",
             "console": "integratedTerminal",
             "vmArgs": ""
         },

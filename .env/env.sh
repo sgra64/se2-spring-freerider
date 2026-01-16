@@ -17,6 +17,7 @@ function run() {
 
 function wipe() {
     [ -f ".classpath#" ] && cmd --execute rm -f .classpath#
+    unset CLASSPATH
 }
 
 function cmd() {
@@ -31,3 +32,6 @@ function cmd() {
     local prefix=" - "
     [ "$command" ] && echo $prefix$command && [ "$execute" ] && eval $command
 }
+
+[ -f "$cpf" ] &&
+    export CLASSPATH=$( < $cpf)

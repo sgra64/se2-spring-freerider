@@ -1,37 +1,41 @@
-cpf=".classpath#"                                       # classpath file
+cpf=".class.path"                                       # classpath file
 main="de.bht_berlin.freerider.FreeriderApplication"     # class with main() to execute
 
 # make '.classpath#' file
 function mkcp() {
-    [[ "$(uname)" =~ (CYGWIN|MINGW) ]] && local sep=";" || local sep=":"
-    cmd --execute mvn dependency:build-classpath -q -Dmdep.outputFile=$cpf.tmp
-    cmd --execute sed -e 's/^/target\\/classes$sep/' " < $cpf.tmp > $cpf"
-    cmd --execute rm $cpf.tmp
+    if [ ! -f "$cpf" -o "$1" = "-f" ]; then
+        [[ "$(uname)" =~ (CYGWIN|MINGW) ]] && local sep=";" || local sep=":"
+        echo "- mvn dependency:build-classpath -q -Dmdep.outputFile=$cpf.tmp"
+        mvn dependency:build-classpath -q -Dmdep.outputFile=$cpf.tmp
+        sed -e "s/^/target\\/classes$sep/" < $cpf.tmp > $cpf
+        rm $cpf.tmp
+    fi
 }
 
 function run() {
     [ -f "$cpf" ] &&
-        cmd --execute java -cp @.classpath# $main ||
+        java -cp @$cpf $main ||
         echo "no classpath file: $cpf, create with 'mkcp'"
 }
 
 function wipe() {
-    [ -f ".classpath#" ] && cmd --execute rm -f .classpath#
+    [ -f "$cpf" ] && crm -f $cpf
     unset CLASSPATH
 }
 
-function cmd() {
-    local args=();
-    for arg in $@; do
-        case $arg in
-        --execute) local execute=true ;;
-        *) args+=($arg) ;;
-        esac
-    done
-    local command="${args[@]}"
-    local prefix=" - "
-    [ "$command" ] && echo $prefix$command && [ "$execute" ] && eval $command
-}
+mkcp $@ &&
+    echo "- export CLASSPATH=\$(cat $cpf)" &&
+    export CLASSPATH=$(cat $cpf)
 
-[ -f "$cpf" ] &&
-    export CLASSPATH=$( < $cpf)
+# function cmd() {
+#     local args=();
+#     for arg in $@; do
+#         case $arg in
+#         --execute) local execute=true ;;
+#         *) args+=($arg) ;;
+#         esac
+#     done
+#     local command="${args[@]}"
+#     local prefix=" - "
+#     [ "$command" ] && echo $prefix$command && [ "$execute" ] && eval $command
+# }

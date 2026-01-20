@@ -40,7 +40,7 @@
     "code-runner.executorMap": {
         // create file '.classpath#' with:
         // - mvn dependency:build-classpath -q -Dmdep.outputFile=.classpath#
-        "java": "java -cp @.classpath# de.bht_berlin.freerider.FreeriderApplication"
+        "java": "java -cp @.class.path de.bht_berlin.freerider.FreeriderApplication"
     },
 
     // Java and debug settings

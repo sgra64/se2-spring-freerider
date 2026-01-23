@@ -102,6 +102,10 @@ Steps:
 
 1. [*Spring-JDBC* access to *FREERIDER-DB*](#7-spring-jdbc-access-to-freerider-db)
 
+1. [*Customers* Endpoint](#8-customers-endpoint)
+
+1. [*OpenAPI* and *Swagger-UI*](#9-openapi-and-swagger-ui)
+
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
@@ -425,7 +429,7 @@ with the *run* function (set during *sourcing*):
 
 ```sh
 # run application with maven
-mvn spring-boot:run --quiet\
+mvn spring-boot:run --quiet
 
 # run application with the run function set during sourcing
 run
@@ -920,8 +924,7 @@ Commit the changes to branch *demo-web-controller* with the
 
 ## 7. *Spring-JDBC* access to *FREERIDER-DB*
 
-Create a new branch `demo-freerider-jdbc` off the *"base"* commit for this
-development.
+Create a new branch `demo-freerider-jdbc` off the *"base"* commit.
 
 Follow tutorial
 [*"Spring JDBC"*](https://www.baeldung.com/spring-jdbc-jdbctemplate)
@@ -979,3 +982,466 @@ it is sufficient to read the existing records and output as tables:
 
 When done, commit changes to branch *demo-freerider-jdbc* with the
 - commit message: `"Spring-JDBC access to FREERIDER-DB"`.
+
+
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+&nbsp;
+
+## 8. *Customers* Endpoint
+
+*API - Endpoints* are interfaces to resources that are provided by a server or
+service. Resources can refer to objects managed by the service such as `/customers`
+or to application concepts such as `/artists` or `/playlists`.
+
+HTTP serves as the underlying protocol with operations: `POST` (create),
+`GET` (read), `PUT` (update) and `DELETE` (delete).
+
+*REST-EP* or *REST-API* follow the REST-style in *Roy Fielding's* PhD dissertation,
+Chapter 5:
+[*"Representational State Transfer (REST)"*](https://roy.gbiv.com/pubs/dissertation/fielding_dissertation.pdf),
+University of California, Irvine, 2000.
+
+Examples of well-designed, published REST-API are:
+
+- [*Spotify-API*](https://developer.spotify.com/documentation/web-api),
+
+- [*PayPal-API*](https://developer.paypal.com/api/rest/) or
+
+- [*Docker-API*](https://docs.docker.com/reference/api/engine).
+
+
+&nbsp;
+
+An implementation of an *API Endpoint* consists of three parts that are typically
+organized in different packages in order to separate concerns:
+
+- `controller` -- with code that handles the endpoint with reading content from
+    incoming [*RequestParam*](https://stackoverflow.com/questions/32367501/what-is-the-difference-between-pathparam-and-pathvariable),
+    [*PathVariables*](https://stackoverflow.com/questions/32367501/what-is-the-difference-between-pathparam-and-pathvariable) or the
+    [*RequestBody*](https://www.baeldung.com/spring-request-response-body)
+    with *JSON-data* sent with the HTTP-request.
+
+- `datamodel` -- definition (schema) of the underlying data types including
+    derived types used to access objects in databases:
+    [*Data Access Objects (DAO)*](https://www.baeldung.com/java-dao-pattern)
+    or types defining structures sent over the network:
+    [*Data Transfer Objects (DTO)*](https://bell-sw.com/blog/ultimate-guide-to-using-dtos-with-spring-boot/).
+
+- `logic` -- contains the underlying business logic and object storage.
+
+
+&nbsp;
+
+Create a new branch `demo-customers-ep` off the *"base"* commit.
+
+Fetch code drop:
+[se2-repo/endpoints](https://github.com/sgra64/se2-spring-freerider/tree/endpoints)
+and checkout files:
+
+```sh
+controller:
+src/main/java/de/bht_berlin/freerider/controller/CustomerController.java
+src/main/java/de/bht_berlin/freerider/controller/ShutdownController.java
+
+datamodel:
+src/main/java/de/bht_berlin/freerider/datamodel/Customer.java
+
+logic:
+src/main/java/de/bht_berlin/freerider/logic/CustomerStore.java
+```
+
+Inspect files:
+
+- `controller` package:
+
+    - [*CustomerController.java*](https://github.com/sgra64/se2-spring-freerider/blob/endpoints/src/main/java/de/bht_berlin/freerider/controller/CustomerController.java)
+
+    - [*ShutdowController.java*](https://github.com/sgra64/se2-spring-freerider/blob/endpoints/src/main/java/de/bht_berlin/freerider/controller/ShutdowController.java)
+
+- `datamodel` package:
+
+    - [*Customer.java*](https://github.com/sgra64/se2-spring-freerider/blob/endpoints/src/main/java/de/bht_berlin/freerider/datamodel/Customer.java)
+
+- `logic` package:
+
+    - [*CustomerStore.java*](https://github.com/sgra64/se2-spring-freerider/blob/endpoints/src/main/java/de/bht_berlin/freerider/logic/CustomerStore.java)
+
+
+&nbsp;
+
+In order to create the *REST API Endpoint*, the HTTP-Server dependency must be included
+in `pom.xml`:
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+<!-- <dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>3.0.0</version>
+</dependency> -->
+
+Furthermore, `application.properties` must include the *HTTP-server* configuration:
+
+```properties
+spring.application.name=freerider
+
+# show 'Spring' banner: OFF, CONSOLE, LOG
+spring.main.banner-mode=CONSOLE
+
+# configure HTTP-server listening port, shutdown phases
+server.port=8080
+spring.lifecycle.timeout-per-shutdown-phase=2s
+
+# swagger configuration, disable for production
+springdoc.swagger-ui.enabled=true
+
+# report logs: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE
+logging.level.root=INFO
+```
+
+Source the project such that *CLASSPATH* is updated with the new dependencies:
+
+```sh
+source .env/env.sh -f
+```
+
+Recompile and start the server:
+
+```sh
+mvn compile
+
+# the application will start the HTTP-server with controllers
+mvn spring-boot:run --quiet
+
+# alternatively
+java de.bht_berlin.freerider.FreeriderApplication
+```
+```
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.1)
+
+2026-01-23T00:14:01.299+01:00  INFO 10508 --- [freerider] [           main] d.b.freerider.FreeriderApplication       : Starting FreeriderApplication using Java 21 with PID 10508 (C:\Sven1
+\svgr2\workspaces\2-SE\spring-freerider\target\classes started by svgr2 in C:\Sven1\svgr2\workspaces\2-SE\spring-freerider)
+2026-01-23T00:14:01.323+01:00  INFO 10508 --- [freerider] [           main] d.b.freerider.FreeriderApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-01-23T00:14:04.436+01:00  INFO 10508 --- [freerider] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-01-23T00:14:04.476+01:00  INFO 10508 --- [freerider] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-23T00:14:04.477+01:00  INFO 10508 --- [freerider] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-01-23T00:14:04.629+01:00  INFO 10508 --- [freerider] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 3086 ms
+2026-01-23T00:14:06.172+01:00  INFO 10508 --- [freerider] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-01-23T00:14:06.184+01:00  INFO 10508 --- [freerider] [           main] d.b.freerider.FreeriderApplication       : Started FreeriderApplication in 5.971 seconds (process running for 7
+.571)
+```
+
+The built-in
+[Tomcat](https://tomcat.apache.org)
+web-server that came with the `spring-boot-starter-web` dependency is running and listening
+on TCP-Port: *8080*.
+
+Pointing the web-browser to URL:
+[*http://localhost:8080/customers*](http://localhost:8080/customers)
+will trigger a GET-Request being sent to the `/customers` controller.
+The controller will fetch all customer objects from the *DataStore*
+and return as JSON-array:
+
+```
+[
+    {"id":100, "name":"Meyer", "firstNames":"Eric", "contacts":"eme24@gmail.com"},
+    {"id":101, "name":"Blumenfeld", "firstNames":"Anne", "contacts":"+49 030 239531265"},
+    {"id":102, "name":"Weimer", "firstNames":"Tim", "contacts":"tim@gmail.com"}
+]
+```
+
+Next, request objects in the terminal. The
+[*curl*](geeksforgeeks.org/linux-unix/curl-command-in-linux-with-examples) -
+command
+
+```sh
+curl -X GET http://localhost:8080/customers
+```
+```
+[{"id":100, "name":"Meyer", "firstNames":"Eric", "contacts":"eme24@gmail.com"}, {"id":101, "name":"Blumenfeld", "firstNames":"Anne", "contacts":"+49 030 239531265"}, {"id":102, "name":"Weimer", "firstNames":"Tim", "contacts":"tim@gmail.com"}]
+```
+
+Try the json pretty printer (if installed) to format the output:
+
+```sh
+# try the json pretty printer (if installed)
+curl -X GET http://localhost:8080/customers -s | json_pp 2>/dev/null
+```
+```
+[
+   {
+      "contacts" : "eme24@gmail.com",
+      "firstNames" : "Eric",
+      "id" : 100,
+      "name" : "Meyer"
+   },
+   {
+      "contacts" : "+49 030 239531265",
+      "firstNames" : "Anne",
+      "id" : 101,
+      "name" : "Blumenfeld"
+   },
+   {
+      "contacts" : "tim@gmail.com",
+      "firstNames" : "Tim",
+      "id" : 102,
+      "name" : "Weimer"
+   }
+]
+```
+
+
+Find a specific *Customer* with the *id: 100*.
+
+
+```sh
+curl -X GET http://localhost:8080/customers/100
+
+# pretty print json
+curl -X GET http://localhost:8080/customers/100 -s | json_pp 2>/dev/null
+```
+
+Mind that a single *Customer* is returned, not an array (no brackets `[]`):
+
+```
+{ "id":100, "name":"Meyer", "firstNames":"Eric", "contacts":"eme24@gmail.com" }
+```
+
+Pretty-printed output:
+
+```
+{
+   "contacts" : "eme24@gmail.com",
+   "firstNames" : "Eric",
+   "id" : 100,
+   "name" : "Meyer"
+}
+```
+
+What happens when the *Customer* *id* does not exist?
+
+
+```sh
+curl -X GET http://localhost:8080/customers/500 | json_pp 2>/dev/null
+```
+
+In this case,
+[*Status Code*](https://developer.mozilla.org/de/docs/Web/HTTP/Reference/Status)
+404 (not found) is returned.
+
+```
+{
+   "error" : "Not Found",
+   "path" : "/customers/500",
+   "status" : 404,
+   "timestamp" : "2026-01-23T09:25:05.341Z"
+}
+```
+
+
+&nbsp;
+
+Creating a new object via the endpoint means that data needs to be sent to the server
+as JSON-data:
+
+```sh
+# include JSON-data into the POST-request
+curl -X POST -H "Content-Type: application/json" --data \
+    \
+    '{ "id":104, "name":"Medvedev", "firstNames":"Dmitry", "contacts":"gopnik@gmail.com" }' \
+    \
+    http://localhost:8080/customers
+
+# read JSON-data from file: 'json/dmitry.json'
+curl -X POST -H "Content-Type: application/json" --data @src/main/resources/json/dmitry.json \
+        http://localhost:8080/customers
+
+# check the new customer has been added
+curl -X GET http://localhost:8080/customers -s | json_pp 2>/dev/null
+```
+```
+[
+    { "id":100, "name":"Meyer", "firstNames":"Eric", "contacts":"eme24@gmail.com" },
+    { "id":101, "name":"Blumenfeld", "firstNames":"Anne", "contacts":"+49 030 239531265" },
+    { "id":102, "name":"Weimer", "firstNames":"Tim", "contacts":"tim@gmail.com" },
+    { "id":104, "name":"Medvedev", "firstNames":"Dmitry", "contacts":"gopnik@gmail.com" }   <-- new object
+]
+```
+
+Repeat the POST-request:
+
+```sh
+# read JSON-data from file: 'json/dmitry.json'
+curl -X POST -H "Content-Type: application/json" --data @json/dmitry.json \
+        http://localhost:8080/customers
+```
+
+An error `409` (conflict) is returned since an object with *id: 104* already exists:
+
+```
+{ "timestamp":"2026-01-23T00:53:04.063Z", "status":409, "error":"Conflict", "path":"/customers" }
+```
+
+
+&nbsp;
+
+Complete the endpoint with `PUT` and `DELETE` operations, also add a method:
+
+- `void deleteById(long id);`
+
+to class 
+[*CustomerStore.java*](https://github.com/sgra64/se2-spring-freerider/blob/endpoints/src/main/java/de/bht_berlin/freerider/logic/CustomerStore.java).
+
+Demonstrate the result:
+
+```sh
+# show all customers
+curl -X GET http://localhost:8080/customers
+
+# remove customer with id: 101 and show again
+curl -X DELETE http://localhost:8080/customers/101
+curl -X GET    http://localhost:8080/customers
+
+
+# update contact for customer id: 102
+curl -X PUT -H "Content-Type: application/json" --data \
+    \
+    '{ "id":102, "name":"Weimer", "firstNames":"Tim", "contacts":"+49 030 9399488" }' \
+    \
+    http://localhost:8080/customers
+
+# show all customers
+curl -X GET http://localhost:8080/customers -s | json_pp 2>/dev/null
+```
+
+Customer with *id: 101* is gone and the contact for Customer *id: 102* has been
+updated:
+
+```
+[
+    { "id":100, "name":"Meyer", "firstNames":"Eric", "contacts":"eme24@gmail.com"},
+    { "id":102, "name":"Weimer", "firstNames":"Tim", "contacts":"+49 030 9399488"}
+]                                                                ^^^^^^^^^^^^^^^ -- updated
+```
+
+
+&nbsp;
+
+When done, commit changes to branch *demo-freerider-jdbc* with
+- commit message: `"/customers endpoint"`.
+
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+&nbsp;
+
+## 9. *OpenAPI* and *Swagger-UI*
+
+[*OpenAPI*](https://www.openapis.org)
+is a developing standard for the specification of *HTTP* application programming interfaces:
+
+<img src="https://www.openapis.org/wp-content/uploads/sites/31/2023/05/What-is-OpenAPI-Simple-API-Lifecycle-Vertical.png" width="240"/>
+
+
+&nbsp;
+
+[*Swagger*](https://swagger.io/specification) is a toolset supporting the development and
+maintanance of *HTTP* application programming interfaces.
+[*OpenAPI Description (OAD)*](https://swagger.io/specification) describes the surface of an API
+and its semantics. It is composed of an entry document and referenced documents.
+
+*Swagger-UI* (right) is a prominent tool to visualize endpoint definitions from a formal
+endpoint specification called *OpenAPI document* shown in *YAML*-format to the left:
+
+<img src="https://raw.githubusercontent.com/sgra64/se2-spring-freerider/refs/heads/markup/img/open-api-2.png" width="1000"/>
+
+Refer to folder:
+
+- `src/main/resources/api-docs`:
+
+    - [*api-docs.json*](https://github.com/sgra64/se2-spring-freerider/blob/endpoints/src/main/resources/api-docs/api-docs.json),
+
+    - [*api-docs.yaml*](https://github.com/sgra64/se2-spring-freerider/blob/endpoints/src/main/resources/api-docs/api-docs.yaml).
+
+
+&nbsp;
+
+In order to enable *OpenAPI* and *Swagger*, the following dependency must be included
+in `pom.xml`:
+
+```xml
+<groupId>org.springdoc</groupId>
+<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+<version>3.0.0</version>
+```
+
+Re-source the project to update *CLASSPATH* with the new dependency:
+
+```sh
+source .env/env.sh -f
+```
+
+Recompile and start the server:
+
+```sh
+mvn compile
+
+# the application will start the HTTP-server with controllers
+mvn spring-boot:run --quiet
+
+# alternatively
+java de.bht_berlin.freerider.FreeriderApplication
+```
+
+Point a browser to URLs in order to see the *OpenAPI* specification for all endpoints
+supported by this HTTP-server and the *Swagger-UI*:
+
+- *OpenAPI* specification:
+    [*http://localhost:8080/v3/api-docs*](http://localhost:8080/v3/api-docs)
+
+- *Swagger-UI*:
+    [*http://localhost:8080/swagger-ui/index.html*](http://localhost:8080/swagger-ui/index.html)
+
+- Open the hosted *Swagger-Editor* to develop *OpenAPI* specifications:
+    [*https://editor.swagger.io*](https://editor.swagger.io)
+
+
+&nbsp;
+
+*Swagger-UI* is now active for the endpoint. It is an active UI, which means HTTP-requests
+can be issued from the Web-browser and results inspected:
+
+<img src="https://raw.githubusercontent.com/sgra64/se2-spring-freerider/refs/heads/markup/img/open-api-1.png" width="1000"/>
+
+
+&nbsp;
+
+Show all customers by opening the `GET /customers` view (triangle to the right).
+Click `Try it out` and then execute:
+
+
+<img src="https://raw.githubusercontent.com/sgra64/se2-spring-freerider/refs/heads/markup/img/open-api-3.png" width="1000"/>
+
+Update the contact for *Anne Blumenfeld* to `+49 030 84850040` and delete *Tim Weimer*
+using the *Swagger UI*.
+
+
+&nbsp;
+
+When done, commit changes to branch *demo-freerider-jdbc* with the
+- commit message: `"OpenAPI and Swagger-UI for /customers endpoint"`.
+

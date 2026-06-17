@@ -1,0 +1,12 @@
+# application configuration
+spring:
+  application:
+    name: freerider
+
+  # show 'Spring Boot' banner: OFF, CONSOLE, LOG
+  main.banner-mode: CONSOLE
+
+# report logs: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE
+logging:
+  level:
+    root: ERROR

@@ -4,10 +4,14 @@
 # see: https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 #------------------------------------------------------------------------------
 
-# ignore git-module files
+# ignore .gitmodule file, git-modules and temporary CodeRunner files
 .gitmodules
 .env/
 .vscode/
+tempCodeRunner*
+
+# ignore local database and folders
+*data*/
 
 # ignore output directories with generated content
 bin/
@@ -15,9 +19,8 @@ out/
 target/
 *.class
 
-# ignore classpath file
+# ignore .classpath file
 .class*path*
-class*path*
 
 # ignore patch files
 *.patch
@@ -69,3 +72,4 @@ temp/
 
 # ignore OSX hidden files (Mac)
 .DS_Store
+

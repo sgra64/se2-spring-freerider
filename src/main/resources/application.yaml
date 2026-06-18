@@ -1,0 +1,44 @@
+# application configuration
+spring:
+  application:
+    name: freerider
+
+  # NEW: database connection
+  datasource:
+    # # connection to embedded h2-database
+    # url: jdbc:h2:mem:FREERIDER_DB;DB_CLOSE_DELAY=-1
+    # # url: jdbc:h2:file:./data/FREERIDER_DB
+    # driver-class-name: org.h2.Driver
+    # username: sa
+    # password:
+    # 
+    # connection to external MySQL-database 'FREERIDER_DB'
+    url: jdbc:mysql://localhost:3306/FREERIDER_DB
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: freerider
+    password: free.ride
+    # 
+    # # connection to external MySQL-database 'TEST_DB'
+    # url: jdbc:mysql://localhost:3306/TEST_DB
+    # driver-class-name: com.mysql.cj.jdbc.Driver
+    # username: root
+    # password:
+
+  h2:
+    console.enabled: true
+    console.path: /h2-console
+    console.settings.web-allow-others: true
+
+  sql:
+    # initialize database: 'always', 'never', 'embedded'
+    init.mode: never
+    init.schema-locations: classpath:init-schema.sql
+    init.data-locations: classpath:init-data.sql
+
+  # show 'Spring Boot' banner: OFF, CONSOLE, LOG
+  main.banner-mode: CONSOLE
+
+# report logs: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE
+logging:
+  level:
+    root: ERROR

@@ -40,8 +40,8 @@ mvn dependency:build-classpath -Dmdep.outputFile=classpath.txt
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
-[*Spring Boot*](https://spring.io) is a comprehensive framework for *Java*
-to develop commercial-grade applications.
+[*Spring Boot*](https://spring.io) is a professionally-grade framework for
+developing *Java* applications.
 
 
 &nbsp;
@@ -336,6 +336,21 @@ mvn test-compile                # compile tests under 'src/test/java'
 
 find target                     # show compiled files under 'target'
 ```
+
+*--> Fix:* If an error occurs during compilation:
+`"unknown compiler flag: --sun-misc-unsafe-memory-access"`, your
+Java version is likely less than *`25`* (probe with: `java --verion`). Java
+versions higher or equal `25` require the flag - versions less than `25`
+causes the error.
+To fix, remove from file `.mvn/jvm.config` the line:
+
+```sh
+# remove line from file '.mvn/jvm.config':
+--sun-misc-unsafe-memory-access=allow
+```
+
+Commit the change with message:
+    `update .mvn/jvm.config, remove --sun-misc-unsafe-memory-access`.
 
 
 &nbsp;

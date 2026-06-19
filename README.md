@@ -298,8 +298,70 @@ Properties of the *"JDBC"* interface are:
 1. If objects are created for returned records, the Row-Mapper pattern is
     used to create objects from rows of a *ResultSet*.
 
-*Spring Boot* needs configuration information for the database, which is
-provided in the central application configuration file under path
+
+&nbsp;
+
+Checkout content from remote branch *freerider-db-jdbc-jdbc* that demonstrates
+the use of *Spring Boot's* JDBC-interface that is encapsulated in a *Bean* object
+of type
+[*JdbcTemplate*](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html).
+
+```sh
+# checkout content from remote branch 'freerider-db-jdbc-jdbc'
+git checkout se2-repo/freerider-db-jdbc -- src/main/java
+
+find src/main/java -name '*.java'
+```
+```
+src/main/java/de/bht_berlin/freerider/FreeriderApplication.java
+src/main/java/de/bht_berlin/freerider/JdbcRunner.java               <-- new
+src/main/java/de/bht_berlin/freerider/TableFormatter.java           <-- new
+src/main/java/de/bht_berlin/freerider/TableFormatterFactory.java    <-- new
+```
+
+
+&nbsp;
+
+Add dependencies to *pom.xml* to make the new code compile:
+
+```xml
+<!-- Spring Boot Jdbc-starter-package -->
+<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
+
+<!-- The MySQL Database driver -->
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+
+&nbsp;
+
+Inspect and understand the new classes:
+
+- [*JdbcRunner.java*](https://github.com/sgra64/se2-spring-freerider/tree/freerider-db-jdbc/src/main/java/de/bht_berlin/freerider)
+     -- the class has the entry point of the application using
+    a [*CommandLineRunner*](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/CommandLineRunner.html)
+    *Bean* factory method. The class also runs *JDBC* queries.
+
+- [*TableFormatterFactory.java*](https://github.com/sgra64/se2-spring-freerider/tree/freerider-db-jdbc/src/main/java/de/bht_berlin/freerider/TableFormatterFactory.java)
+    -- class with factory methods of *TableFormatter* *Bean* objetcs that are
+    used to format output as a table.
+
+- [*TableFormatter.java*](https://github.com/sgra64/se2-spring-freerider/tree/freerider-db-jdbc/src/main/java/de/bht_berlin/freerider/TableFormatter.java)
+    -- class that formats tables.
+
+
+&nbsp;
+
+Furthermore, *Spring Boot* needs configuration information for the database,
+which is provided in the central application configuration file under path
 `src/main/resources`:
 
 - `application.properties` or
@@ -355,41 +417,6 @@ logging:
   level:
     root: ERROR
 ```
-
-
-&nbsp;
-
-Checkout more content from remote branch *freerider-db-jdbc-jdbc* that demonstrates
-the use of *Spring Boot's* JDBC-interface that is encapsulated in a *Bean* object
-of type
-[*JdbcTemplate*](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html).
-
-```sh
-# checkout content from remote branch 'freerider-db-jdbc-jdbc'
-git checkout se2-repo/freerider-db-jdbc -- src/main/java
-
-find src/main/java -name '*.java'
-```
-```
-src/main/java/de/bht_berlin/freerider/FreeriderApplication.java
-src/main/java/de/bht_berlin/freerider/JdbcRunner.java               <-- new
-src/main/java/de/bht_berlin/freerider/TableFormatter.java           <-- new
-src/main/java/de/bht_berlin/freerider/TableFormatterFactory.java    <-- new
-```
-
-Inspect and understand the new classes:
-
-- [*JdbcRunner.java*](https://github.com/sgra64/se2-spring-freerider/tree/freerider-db-jdbc/src/main/java/de/bht_berlin/freerider)
-     -- the class has the entry point of the application using
-    a [*CommandLineRunner*](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/CommandLineRunner.html)
-    *Bean* factory method. The class also runs *JDBC* queries.
-
-- [*TableFormatterFactory.java*](https://github.com/sgra64/se2-spring-freerider/tree/freerider-db-jdbc/src/main/java/de/bht_berlin/freerider/TableFormatterFactory.java)
-    -- class with factory methods of *TableFormatter* *Bean* objetcs that are
-    used to format output as a table.
-
-- [*TableFormatter.java*](https://github.com/sgra64/se2-spring-freerider/tree/freerider-db-jdbc/src/main/java/de/bht_berlin/freerider/TableFormatter.java)
-    -- class that formats tables.
 
 
 &nbsp;
@@ -508,7 +535,7 @@ Extend class *JdbcRunner* such that it produces the following output table
 using *customerReservationsTableFormatter*. The output shows all reservations
 with
 
-- Customer names (mind the format),
+- Customer names (mind the format: `name, firstname` in the *NAME* column),
 
 - start and end date/time,
 

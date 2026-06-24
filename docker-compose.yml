@@ -1,0 +1,66 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# 'docker-compose.yml' specifies a system of services running in separate
+# containers. Two services are created:
+# - mysqld       - container running the MySQL database process 'mysqld'
+# - freerider-ep - container running the 'freerider-ep-1.0.0.jar'
+# 
+# Use commands:
+# - mvn clean package             ; compile and package 'freerider-ep-1.0.0.jar'
+# - mvn spring-boot:run           ; run Java-application separately
+# - docker-compose up -d          ; build images start-up services in containers
+# - docker-compose stop           ; stop all containers
+# - docker logs -f freerider-mysql-db ; show logs of 'freerider-ep' container
+# - docker logs -f freerider-ep       ; show logs of 'freerider-ep' container
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+services:
+
+  # service #1: 'mysqld', container-name: 'freerider-mysql-db'
+  # database service running the MySQL database process 'mysqld'
+  mysqld:
+    image: mysql:8.4
+    container_name: freerider-mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: "FREERIDER_DB"
+      MYSQL_USER: "freerider"
+      MYSQL_PASSWORD: "free.ride"
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqld-volume:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # service #2: 'freerider-ep', container-name: 'freerider-ep'
+  # container running the 'freerider-ep-1.0.0.jar', uses the 'mysqld' service
+  freerider-ep:
+    container_name: freerider-ep
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: freerider-ep-image:latest
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+    depends_on:
+      mysqld:
+        condition: service_healthy
+
+    environment:
+      # 'jdbc:mysql://<service-name>:3306/FREERIDER_DB'
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysqld:3306/FREERIDER_DB"
+      SPRING_DATASOURCE_USERNAME: "freerider"
+      SPRING_DATASOURCE_PASSWORD: "free.ride"
+
+# volume 'mysqld-volume' that holds the database data
+volumes:
+  mysqld-volume:

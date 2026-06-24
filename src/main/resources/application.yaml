@@ -1,0 +1,160 @@
+# application configuration
+spring:
+  application:
+    name: freerider
+
+  # NEW: database connection
+  datasource:
+    # # connection to embedded h2-database
+    # url: jdbc:h2:mem:FREERIDER_DB;DB_CLOSE_DELAY=-1
+    # # url: jdbc:h2:file:./data/FREERIDER_DB
+    # driver-class-name: org.h2.Driver
+    # username: sa
+    # password:
+    # 
+    # connection to external MySQL-database 'FREERIDER_DB'
+    url: jdbc:mysql://localhost:3306/FREERIDER_DB
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: freerider
+    password: free.ride
+    # 
+    # # connection to external MySQL-database 'TEST_DB'
+    # url: jdbc:mysql://localhost:3306/TEST_DB
+    # driver-class-name: com.mysql.cj.jdbc.Driver
+    # username: root
+    # password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      # validate db-tables against classes: 'none', 'validate', 'update', 'create', 'create-drop'
+      ddl-auto: none
+      # 
+      # use uppercase for table names (required by MySQL)
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  h2:
+    console.enabled: true
+    console.path: /h2-console
+    console.settings.web-allow-others: true
+
+  sql:
+    # initialize database: 'always', 'never', 'embedded'
+    init.mode: embedded
+    init.schema-locations: classpath:init-schema.sql
+    init.data-locations: classpath:init-data.sql
+
+  # show 'Spring Boot' banner: OFF, CONSOLE, LOG
+  main.banner-mode: CONSOLE
+
+spring.main:
+  # disable or start embedded tomcat web-server: 'servlet', 'none', 'reactive'
+  web-application-type: servlet
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+# report logs: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE
+# logging:
+#   level:
+#     root: ERROR
+
+
+# Erlaubt den Zugriff über Frames (wichtig, da die H2-Konsole HTML-Frames nutzt)
+spring.security.frame-options.disable: true
+
+# Erlaubt externen Systemen (wie deinem Windows-Host) den Zugriff auf die Web-Konsole im Container
+spring.h2.console.settings.web-allow-others: true
+
+# suppress INFO log 'Database driver: undefined/unknown'
+logging.level.org.hibernate.orm.connections.pooling: WARN
+
+
+
+# Deaktiviert die Standard-SQL-Ausgabe von Spring/JPA
+# spring.jpa.show-sql=false
+# spring.jpa.properties.hibernate.format_sql=false
+
+# Setzt das Log-Level für Hibernate-Core und SQL-Logger auf ERROR oder OFF
+
+logging.level.org.hibernate: ERROR
+
+logging.level.org.hibernate.SQL: ERROR
+logging.level.org.hibernate.orm.results.loading.internal: ERROR
+
+# Falls Sie zuvor SQL-Parameter geloggt haben (Typ-Ausgaben), hiermit abschalten:
+logging.level.org.hibernate.type.descriptor.sql: ERROR
+
+# Schaltet die "Starting Application...", Profile- und Banner-Meldungen ab
+spring.main.banner-mode: off
+logging.level.org.springframework.boot: WARN
+
+# Schaltet die Logs der Spring-Boot-Anwendungsklasse (de.freerider.application) stumm
+logging.level.de.freerider.application: WARN
+
+# Schaltet das Scannen der Spring Data JPA Repositories stumm (RepositoryConfigurationDelegate)
+logging.level.org.springframework.data: WARN
+
+# Schaltet den HikariCP Connection Pool stumm (Starting..., Added connection...)
+://level.com.zaxxer.hikari: WARN
+
+# Schaltet die JPA/Hibernate-Startup-Meldungen stumm (LocalContainerEntityManagerFactoryBean)
+logging.level.org.springframework.orm.jpa: WARN
+
+logging:
+  level:
+    com.zaxxer.hikari: WARN
+
+# # ===================================================================
+# # H2 DATENBANK KONFIGURATION
+# # ===================================================================
+# # Nutzt eine In-Memory-Datenbank namens "customerdb"
+# # DB_CLOSE_DELAY=-1 sorgt dafür, dass die Daten nicht gelöscht werden, solange die App läuft
+# # spring.datasource.url=jdbc:h2:mem:customerdb;DB_CLOSE_DELAY=-1
+# spring.datasource.url=jdbc:h2:file:./data/database.h2
+# 
+# # Standard H2-Zugangsdaten (wichtig für den Login im Browser)
+# spring.datasource.driver-class-name=org.h2.Driver
+# spring.datasource.username=sa
+# spring.datasource.password=
+# 
+# # ===================================================================
+# # JPA / HIBERNATE EINSTELLUNGEN
+# # ===================================================================
+# 
+# # Hibernate SQL-Dialekt für H2 festlegen
+# spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+# 
+# # ddl-auto=update erstellt die Tabellen beim Start automatisch basierend auf deiner Customer.java
+# spring.jpa.hibernate.ddl-auto=update
+# 
+# # Zeigt alle SQL-Befehle, die Spring Boot im Hintergrund ausführt, formatiert in der Konsole an
+# spring.jpa.show-sql=true
+# spring.jpa.properties.hibernate.format_sql=true
+# 
+# # ===================================================================
+# # H2 WEB-KONSOLE AKTIVIEREN
+# # ===================================================================
+# 
+# # Schaltet die grafische Oberfläche für den Browser frei
+# spring.h2.console.enabled=true
+# 
+# # Pfad, unter dem die Konsole erreichbar ist
+# spring.h2.console.path=/h2-console
+# 
+# # Erlaubt den Zugriff über Frames (wichtig, da die H2-Konsole HTML-Frames nutzt)
+# spring.security.frame-options.disable=true
+# 
+# # Erlaubt externen Systemen (wie deinem Windows-Host) den Zugriff auf die Web-Konsole im Container
+# spring.h2.console.settings.web-allow-others=true
+# 
+# # suppress INFO log 'Database driver: undefined/unknown'
+# logging.level.org.hibernate.orm.connections.pooling=WARN

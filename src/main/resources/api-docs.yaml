@@ -1,0 +1,486 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+tags:
+  - name: Reservation Endpoint
+    description: Endpoint to manage Reservations in the database
+  - name: Vehicle Endpoint
+    description: Endpoint to manage Vehicles in the database
+  - name: Customer Endpoint
+    description: Endpoint to manage Customers in the database
+paths:
+  /api/vehicles/{id}:
+    get:
+      tags:
+        - Vehicle Endpoint
+      summary: Get vehicle by id
+      description: Return a single vehicle by ID from the database.
+      operationId: getVehicleById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+    put:
+      tags:
+        - Vehicle Endpoint
+      summary: Update vehicle
+      description: Update an existing vehicle by ID in the database.
+      operationId: updateVehicle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vehicle"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+    delete:
+      tags:
+        - Vehicle Endpoint
+      summary: Delete vehicle
+      description: Delete a vehicle by ID from the database.
+      operationId: deleteVehicle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/reservations/{id}:
+    get:
+      tags:
+        - Reservation Endpoint
+      summary: Get reservation by id
+      description: Return a single reservation by ID from the database.
+      operationId: getReservationById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Reservation"
+    put:
+      tags:
+        - Reservation Endpoint
+      summary: Update reservation
+      description: Update an existing reservation by ID in the database.
+      operationId: updateReservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Reservation"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Reservation"
+    delete:
+      tags:
+        - Reservation Endpoint
+      summary: Delete reservation
+      description: Delete a reservation by ID from the database.
+      operationId: deleteReservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/customers/{id}:
+    get:
+      tags:
+        - Customer Endpoint
+      summary: Get customer by id
+      description: Return a single customer by ID from the database.
+      operationId: getCustomerById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Customer"
+    put:
+      tags:
+        - Customer Endpoint
+      summary: Update customer
+      description: Update an existing customer by ID in the database.
+      operationId: updateCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Customer"
+    delete:
+      tags:
+        - Customer Endpoint
+      summary: Delete customer
+      description: Delete a customer by ID from the database.
+      operationId: deleteCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/vehicles:
+    get:
+      tags:
+        - Vehicle Endpoint
+      summary: Return all Vehicles
+      description: Return all Vehicles found in the database.
+      operationId: getAllVehicles
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vehicle"
+    post:
+      tags:
+        - Vehicle Endpoint
+      summary: Create vehicle
+      description: Create a new vehicle in the database.
+      operationId: createVehicle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vehicle"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+  /api/reservations:
+    get:
+      tags:
+        - Reservation Endpoint
+      summary: Return all Reservations
+      description: Return all Reservations found in the database.
+      operationId: getAllReservations
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reservation"
+    post:
+      tags:
+        - Reservation Endpoint
+      summary: Create reservation
+      description: Create a new reservation in the database.
+      operationId: createReservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Reservation"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Reservation"
+  /api/customers:
+    get:
+      tags:
+        - Customer Endpoint
+      summary: Return all Customers
+      description: Return all Customers found in the database.
+      operationId: getAllCustomers
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Customer"
+    post:
+      tags:
+        - Customer Endpoint
+      summary: Create customer
+      description: Create a new customer in the database.
+      operationId: createCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Customer"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/Customer"
+  /api/vehicles/search:
+    get:
+      tags:
+        - Vehicle Endpoint
+      summary: Search vehicles by make
+      description: Search for vehicles by their make in the database.
+      operationId: searchByMake
+      parameters:
+        - name: make
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vehicle"
+  /api/reservations/vehicle/{vehicleId}:
+    get:
+      tags:
+        - Reservation Endpoint
+      summary: Get reservations by vehicle
+      description: Return all reservations for a specific vehicle from the database.
+      operationId: getReservationsByVehicle
+      parameters:
+        - name: vehicleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reservation"
+  /api/reservations/customer/{customerId}:
+    get:
+      tags:
+        - Reservation Endpoint
+      summary: Get reservations by customer
+      description: Return all reservations for a specific customer from the database.
+      operationId: getReservationsByCustomer
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reservation"
+  /api/customers/search:
+    get:
+      tags:
+        - Customer Endpoint
+      summary: Search customers by name
+      description: Search for customers by their name in the database.
+      operationId: searchByName
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Customer"
+components:
+  schemas:
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        make:
+          type: string
+        model:
+          type: string
+        seats:
+          type: integer
+          format: int32
+        category:
+          type: string
+          enum:
+            - Sedan
+            - SUV
+            - Convertible
+            - Van
+            - Bike
+        power:
+          type: string
+          enum:
+            - Gasoline
+            - Diesel
+            - Electric
+            - Hybrid
+            - Hydrogen
+        status:
+          type: string
+          enum:
+            - Active
+            - Serviced
+            - Terminated
+    Reservation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        customer:
+          type: integer
+          format: int64
+        vehicle:
+          type: integer
+          format: int64
+        timeBegin:
+          type: string
+          format: date-time
+        timeEnd:
+          type: string
+          format: date-time
+        pickup:
+          type: string
+        dropoff:
+          type: string
+        status:
+          type: string
+          enum:
+            - Inquired
+            - InquiryConfirmed
+            - Booked
+            - Cancelled
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        firstName:
+          type: string
+        contact:
+          type: string
+        status:
+          type: string
+          enum:
+            - Active
+            - InRegistration
+            - Terminated
+        statusChange:
+          type: string
+          format: date-time
